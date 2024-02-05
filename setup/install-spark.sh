@@ -18,4 +18,3 @@ cat >> "$BASH_PROFILE" <<EOF
 export "SPARK_HOME=$SPARK_HOME"
 export PATH=\$PATH:\$SPARK_HOME/bin
 EOF
-
