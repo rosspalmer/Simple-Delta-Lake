@@ -11,10 +11,9 @@ wget "https://dlcdn.apache.org/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-b
 tar xvf "spark-$SPARK_VERSION-bin-hadoop3.tgz"
 mv "spark-$SPARK_VERSION-bin-hadoop3" $SPARK_HOME
 
+/usr/bin/cat <<EOF >> "$BASH_PROFILE"
 export SPARK_HOME=$SPARK_HOME
 export PATH=\$PATH:\$SPARK_HOME/bin
-
-/usr/bin/cat <<EOF >> ~/.bashrc
-export "SPARK_HOME=$SPARK_HOME"
-export PATH=\$PATH:\$SPARK_HOME/bin
 EOF
+
+source "$BASH_PROFILE"
