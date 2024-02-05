@@ -18,6 +18,4 @@ export SPARK_CONFIG=$SPARK_CONFIG
 export PATH=\$PATH:\$SPARK_HOME/bin
 EOF
 
-source "$BASH_PROFILE"
-
 cp "$SPARK_CONFIG.template" "$SPARK_CONFIG"

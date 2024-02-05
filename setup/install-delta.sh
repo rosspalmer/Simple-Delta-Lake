@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+BASH_PROFILE=$1
+source "$BASH_PROFILE"
+
 DELTA_VERSION="3.1.0"
 
 /usr/bin/cat <<EOF >> "$SPARK_HOME"
