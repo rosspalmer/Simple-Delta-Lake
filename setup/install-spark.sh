@@ -14,7 +14,7 @@ mv "spark-$SPARK_VERSION-bin-hadoop3" $SPARK_HOME
 export SPARK_HOME=$SPARK_HOME
 export PATH=\$PATH:\$SPARK_HOME/bin
 
-cat <<EOF > "$BASH_PROFILE"
+cat <<EOF >> ~/.bashrc
 export "SPARK_HOME=$SPARK_HOME"
 export PATH=\$PATH:\$SPARK_HOME/bin
 EOF
