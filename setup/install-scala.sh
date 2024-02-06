@@ -11,7 +11,7 @@ SCALA_BINARY="https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_
 
 wget "$SCALA_BINARY"
 
-tar -xvf scala-2.12.18.tgz -C "$SCALA_HOME"
+tar -xvf scala-2.12.18.tgz
 mv "scala-$SCALA_VERSION" "$SCALA_HOME"
 rm scala-2.12.18.tgz
 
