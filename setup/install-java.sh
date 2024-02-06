@@ -9,11 +9,11 @@ OPENJDK_BINARY="https://github.com/adoptium/temurin11-binaries/releases/download
 
 wget "$OPENJDK_BINARY"
 
-mkdir "$JAVA_HOME"
-tar -xvf OpenJDK11*.tar.gz -C "$JAVA_HOME"
+tar -xvf OpenJDK11*.tar.gz
+mv "jdk-11.0.21+9" $JAVA_HOME
 rm OpenJDK11*.tar.gz
 
 /usr/bin/cat <<EOF >> "$BASH_PROFILE"
-export JAVA_HOME=$JAVA_HOME/jdk-11.0.21+9
+export JAVA_HOME=$JAVA_HOME
 export PATH=\$PATH:\$JAVA_HOME/bin
 EOF
