@@ -5,7 +5,7 @@ set -e
 BASH_PROFILE=$1
 
 JAVA_HOME=/usr/local/java
-OPENJDK_BINARY="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21%2B9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.21_9.tar.gz"
+OPENJDK_BINARY="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.21_9.tar.gz"
 
 wget "$OPENJDK_BINARY"
 
@@ -17,4 +17,3 @@ rm OpenJDK11*.tar.gz
 export JAVA_HOME=$JAVA_HOME
 export PATH=\$PATH:\$JAVA_HOME/bin
 EOF
-
