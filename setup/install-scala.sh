@@ -4,7 +4,7 @@ set -e
 # Bash profile file (.bashrc, etc) where environment variables are set
 BASH_PROFILE=$1
 
-SCALA_HOME=/usr/local/spark
+SCALA_HOME=/usr/local/scala
 SCALA_BINARY=https://downloads.lightbend.com/scala/2.12.18/scala-2.12.18.tgz
 
 wget "$SCALA_BINARY"
