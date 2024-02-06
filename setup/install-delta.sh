@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+# Bash profile file (.bashrc, etc) where environment variables are set
 BASH_PROFILE=$1
 source "$BASH_PROFILE"
 
