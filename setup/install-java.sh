@@ -14,6 +14,6 @@ tar -xvf OpenJDK11*.tar.gz -C "$JAVA_HOME"
 rm OpenJDK11*.tar.gz
 
 /usr/bin/cat <<EOF >> "$BASH_PROFILE"
-export JAVA_HOME=$JAVA_HOME
+export JAVA_HOME=$JAVA_HOME/jdk-11.0.21+9
 export PATH=\$PATH:\$JAVA_HOME/bin
 EOF
