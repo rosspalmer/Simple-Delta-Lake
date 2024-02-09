@@ -12,9 +12,9 @@ OPENJDK_BINARY="https://github.com/adoptium/temurin11-binaries/releases/download
 # Use `wget` to download OpenJDK (Java) binary archive in current directory
 wget "$OPENJDK_BINARY"
 
-tar -xvf "*${JAVA_VERSION/+/_}.tar.gz"
+tar -xvf "OpenJDK*${JAVA_VERSION/+/_}.tar.gz"
 mv "jdk-$JAVA_VERSION" "$JAVA_HOME"
-rm "*${JAVA_VERSION/+/_}.tar.gz"
+rm "OpenJDK*${JAVA_VERSION/+/_}.tar.gz"
 
 # Add required environment variables to bash profile file
 /usr/bin/cat <<EOF >> "$BASH_PROFILE"
