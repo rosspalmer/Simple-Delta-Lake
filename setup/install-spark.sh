@@ -1,20 +1,22 @@
 #!/bin/bash
 set -e
 
-# Bash profile file (.bashrc, etc) where environment variables are set
-BASH_PROFILE=$1
-
+# Spark version for build
 SPARK_VERSION="3.5.0"
+# Install location
 SPARK_HOME="/usr/local/spark"
-SPARK_BINARY="spark-$SPARK_VERSION-bin-hadoop3"
+
+BINARY_FILE="spark-$SPARK_VERSION-bin-hadoop3"
+SPARK_BINARY= "https://dlcdn.apache.org/spark/spark-$SPARK_VERSION/$BINARY_FILE.tgz"
 SPARK_CONFIG="$SPARK_HOME/conf/spark-defaults.conf"
 
-wget "https://dlcdn.apache.org/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop3.tgz"
+wget "$SPARK_BINARY"
 
-tar xvf "$SPARK_BINARY.tgz"
-mv "$SPARK_BINARY" "$SPARK_HOME"
-rm "$SPARK_BINARY.tgz"
+tar xvf "$BINARY_FILE.tgz"
+mv "$BINARY_FILE" "$SPARK_HOME"
+rm "$BINARY_FILE.tgz"
 
+# Add required environment variables to bash profile file
 /usr/bin/cat <<EOF >> "$BASH_PROFILE"
 export SPARK_HOME=$SPARK_HOME
 export SPARK_CONFIG=$SPARK_CONFIG

@@ -1,18 +1,22 @@
 #!/bin/bash
 set -e
 
-# Bash profile file (.bashrc, etc) where environment variables are set
-BASH_PROFILE=$1
+# OpenJDK (Java) version for build
+JAVA_VERSION="11.0.21+9"
+# Install location of Java developer kit
+JAVA_HOME="/usr/local/java"
 
-JAVA_HOME=/usr/local/java
-OPENJDK_BINARY="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.21_9.tar.gz"
+# Construct download URL to specific OpenJDK (Java) binary
+OPENJDK_BINARY="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-${JAVA_VERSION/+/%2B}/OpenJDK11U-jdk_x64_linux_hotspot_${JAVA_VERSION/+/_}.tar.gz"
 
+# Use `wget` to download OpenJDK (Java) binary archive in current directory
 wget "$OPENJDK_BINARY"
 
-tar -xvf OpenJDK11*.tar.gz
-mv "jdk-11.0.21+9" $JAVA_HOME
-rm OpenJDK11*.tar.gz
+tar -xvf "*${JAVA_VERSION/+/_}.tar.gz"
+mv "jdk-$JAVA_VERSION" "$JAVA_HOME"
+rm "*${JAVA_VERSION/+/_}.tar.gz"
 
+# Add required environment variables to bash profile file
 /usr/bin/cat <<EOF >> "$BASH_PROFILE"
 export JAVA_HOME=$JAVA_HOME
 export PATH=\$PATH:\$JAVA_HOME/bin
