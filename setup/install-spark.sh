@@ -7,7 +7,7 @@ SPARK_VERSION="3.5.0"
 SPARK_HOME="/usr/local/spark"
 
 BINARY_FILE="spark-$SPARK_VERSION-bin-hadoop3"
-SPARK_BINARY= "https://dlcdn.apache.org/spark/spark-$SPARK_VERSION/$BINARY_FILE.tgz"
+SPARK_BINARY="https://dlcdn.apache.org/spark/spark-$SPARK_VERSION/$BINARY_FILE.tgz"
 SPARK_CONFIG="$SPARK_HOME/conf/spark-defaults.conf"
 
 wget "$SPARK_BINARY"
