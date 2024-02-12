@@ -11,7 +11,7 @@ fi
 
 export BASH_PROFILE=$BASH_PROFILE
 
-pushd setup
+pushd install
 
 bash install-java.sh
 bash install-scala.sh
