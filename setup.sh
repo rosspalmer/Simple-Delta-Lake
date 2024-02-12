@@ -5,7 +5,7 @@ BASH_PROFILE=$1
 
 if [[ -z "$BASH_PROFILE" ]]
 then
-  echo "FAIL: Need to pass BASH_PROFILE as first argument"
+  echo "FAIL: Need to define BASH_PROFILE as first argument"
   exit 1
 fi
 
