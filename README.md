@@ -11,9 +11,10 @@ pairing Spark with Delta tables.
 
 ## Project Structure
 
-The core of the project are bash scripts in the `setup` directory.
+The core of the project are bash scripts in the `install` directory.
 Each install script is dedicated to a specific dev kit or package
-and can be run independently. The majority of 
+and can be run independently. All scripts require that the `BASH_PROFILE`
+
 
 ## Project Status
 
