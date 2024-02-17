@@ -1,7 +1,7 @@
 # Simple-Delta-Lake
 
 Simple-Delta-Lake is a Spark + Delta implementation using all open 
-source tools and compatible with both `local` and `yarn` sessions.
+source tools and compatible with **local**, **standalone**, and **yarn** sessions.
 
 The purpose of this project is to provide a "one step" deployment of 
 a Spark with Delta (including Hadoop+Hive) environment using bash scripts
