@@ -6,16 +6,18 @@ SPARK_VERSION="3.5.0"
 # Install location of Spark package
 SPARK_HOME="/usr/local/spark"
 
-# Identify
+# Identify Spark config file location (will not exist initially)
 SPARK_CONFIG="$SPARK_HOME/conf/spark-defaults.conf"
 
 # Construct download URL for specific Spark binary
 BINARY_FILE="spark-$SPARK_VERSION-bin-hadoop3"
 SPARK_BINARY="https://dlcdn.apache.org/spark/spark-$SPARK_VERSION/$BINARY_FILE.tgz"
 
+# Download Spark binary archive into current directory
 wget "$SPARK_BINARY"
 
-tar xvf "$BINARY_FILE.tgz"
+# Extract Spark binary, move to SPARK_HOME, and remove archive
+tar xf "$BINARY_FILE.tgz"
 mv "$BINARY_FILE" "$SPARK_HOME"
 rm "$BINARY_FILE.tgz"
 
@@ -26,4 +28,5 @@ export SPARK_CONFIG=$SPARK_CONFIG
 export PATH=\$PATH:\$SPARK_HOME/bin
 EOF
 
+# Create initial spark configuration file by copying over template
 cp "$SPARK_CONFIG.template" "$SPARK_CONFIG"

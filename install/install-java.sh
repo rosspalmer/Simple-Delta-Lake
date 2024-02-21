@@ -13,7 +13,8 @@ OPENJDK_BINARY="https://github.com/adoptium/temurin11-binaries/releases/download
 # Use `wget` to download OpenJDK (Java) binary archive in current directory
 wget "$OPENJDK_BINARY"
 
-tar -xvf "$PACKAGE_NAME"
+# Extract Java binary, move to JAVE_HOME, and remove archive
+tar -xf "$PACKAGE_NAME"
 mv "jdk-$JAVA_VERSION" "$JAVA_HOME"
 rm "$PACKAGE_NAME"
 
