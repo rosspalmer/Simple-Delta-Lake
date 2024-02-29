@@ -13,7 +13,14 @@ export BASH_PROFILE=$BASH_PROFILE
 
 pushd install
 
+# Install Java and Scala SDKs
 bash install-java.sh
 bash install-scala.sh
+
+# Install Spark with Hadoop + Hive metastore
 bash install-spark.sh
+bash install-hadoop.sh
+bash install-hive.sh
+
+# Install Delta library
 bash install-delta.sh
