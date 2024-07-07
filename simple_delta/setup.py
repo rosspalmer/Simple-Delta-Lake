@@ -29,19 +29,17 @@ class SetupJob:
 
 @dataclass
 class SetupJavaLib(SetupTask):
-    lib_tar_url: str
-    output_home: str
-    home_variable: str
+    package: str
+    env_variables: Dict[str, str]
 
     def run(self, env: SimpleEnvironment):
 
-        lib_tar_name = wget.download(self.lib_tar_url)
+        download_path = f"{env.setup_path}/{env.package_archive_name(self.package)}"
+        wget.download(env.package_url(self.package), download_path)
 
-        output_lib_tar = f"{self.output_home}/{lib_tar_name}"
-        output_lib_dir = output_lib_tar.split(".")[1]
+        lib_tarfile = tarfile.open(download_path, "r")
+        lib_tarfile.extractall(env.package_home(self.package))
+        os.remove(download_path)
 
-        os.rename(f"{os.getcwd()}/{lib_tar_name}", output_lib_tar)
-        lib_tarfile = tarfile.open(output_lib_tar, "r")
-        lib_tarfile.extractall(output_lib_dir)
-        os.remove(output_lib_tar)
+        # TODO add env variables to profile
 
