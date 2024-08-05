@@ -2,7 +2,7 @@
 set -e
 
 # Spark version for build
-SPARK_VERSION="3.5.0"
+SPARK_VERSION="3.5.1"
 # Install location of Spark package
 SPARK_HOME="/usr/local/spark"
 
