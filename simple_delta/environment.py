@@ -5,7 +5,7 @@ from typing import Dict
 @dataclass
 class SimpleEnvironmentConfig:
     name: str
-    setup_path: str
+    simple_home: str
     profile_path: str = "$HOME/.bashrc"
     java_version: str = "11.0.21+9"
     hadoop_version: str = "3.2.4"
@@ -17,7 +17,7 @@ class SimpleEnvironment:
 
     def __init__(self, config: SimpleEnvironmentConfig):
         self.config = config
-        self.libs_path = f"{config.setup_path}/libs"
+        self.libs_path = f"{config.simple_home}/libs"
 
         self.package_urls: Dict[str, str] = {
             "java": "https://github.com/adoptium/temurin11-binaries/releases/download"
@@ -45,5 +45,8 @@ class SimpleEnvironment:
     def full_package_url(self, package: str) -> str:
         return f"{self.package_urls[package]}/{self.archive_name(package)}"
 
-    def package_home(self, package: str) -> str:
-        return f"{self.config.setup_path}/{package}"
+    def libs_directory(self) -> str:
+        return f"{self.config.simple_home}/libs"
+
+    def package_home_directory(self, package: str) -> str:
+        return f"{self.libs_directory()}/{package}"

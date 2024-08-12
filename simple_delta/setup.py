@@ -35,7 +35,7 @@ class SetupJavaLib(SetupTask):
     def run(self, env: SimpleEnvironment):
 
         download_url = env.full_package_url(self.package)
-        download_path = f"{env.config.setup_path}/{env.archive_name(self.package)}"
+        download_path = f"{env.config.simple_home}/{env.archive_name(self.package)}"
         lib_path = f"{env.libs_path}/{env.package_names[self.package]}"
 
         print(f"Downloading {self.package} binary from:")
@@ -47,5 +47,11 @@ class SetupJavaLib(SetupTask):
         lib_tarfile.extractall(lib_path)
         os.remove(download_path)
 
-        # TODO add env variables to profile
+        print(f"Updating profile script at: {env.config.profile_path}")
+        if not os.path.isfile(env.config.profile_path):
+            raise FileNotFoundError(f"Profile script not found: {env.config.profile_path}")
 
+        # TODO overwrite if exports already existing in file
+        with open(env.config.profile_path, 'a') as file:
+            for variable_name, variable_value in self.env_variables.items():
+                file.writelines(f'export {variable_name}={variable_value}\n')
