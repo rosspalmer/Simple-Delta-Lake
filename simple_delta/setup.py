@@ -4,7 +4,7 @@ import os
 import tarfile
 from typing import Dict, List
 
-import wget
+import urllib.request
 
 from simple_delta.environment import SimpleEnvironment
 
@@ -34,11 +34,17 @@ class SetupJavaLib(SetupTask):
 
     def run(self, env: SimpleEnvironment):
 
-        download_path = f"{env.setup_path}/{env.package_archive_name(self.package)}"
-        wget.download(env.package_url(self.package), download_path)
+        download_url = env.full_package_url(self.package)
+        download_path = f"{env.config.setup_path}/{env.archive_name(self.package)}"
+        lib_path = f"{env.libs_path}/{env.package_names[self.package]}"
+
+        print(f"Downloading {self.package} binary from:")
+        print(download_url)
+
+        urllib.request.urlretrieve(download_url, download_path)
 
         lib_tarfile = tarfile.open(download_path, "r")
-        lib_tarfile.extractall(env.package_home(self.package))
+        lib_tarfile.extractall(lib_path)
         os.remove(download_path)
 
         # TODO add env variables to profile
