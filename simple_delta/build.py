@@ -19,7 +19,7 @@ class SimpleBuild:
         simple_home.mkdir()
 
         required_installs: List[SetupJavaLib] = [
-            SetupJavaLib("java", {"JAVA_HOME": env.package_home_directory('java'),
+            SetupJavaLib("java", {"JAVA_HOME": f"{env.libs_path}/jdk-{env.config.java_version}",
                                   "PATH": "$PATH:$JAVA_HOME/bin"}),
             SetupJavaLib("scala", {"SCALA_HOME": env.package_home_directory('scala'),
                                    "PATH": "$PATH:$SCALA_HOME/bin"}),
