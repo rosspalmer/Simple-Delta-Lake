@@ -6,7 +6,7 @@ from typing import Dict
 class SimpleEnvironmentConfig:
     name: str
     simple_home: str
-    profile_path: str = "$HOME/.bashrc"
+    profile_path: str
     java_version: str = "11.0.21+9"
     hadoop_version: str = "3.2.4"
     scala_version: str = "2.12.18"
