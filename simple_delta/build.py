@@ -20,11 +20,11 @@ class SimpleBuild:
 
         required_installs: List[SetupJavaLib] = [
             SetupJavaLib("java", {"JAVA_HOME": env.package_home_directory('java'),
-                                  "PATH": "PATH=$PATH:$JAVA_HOME/bin"}),
+                                  "PATH": "$PATH:$JAVA_HOME/bin"}),
             SetupJavaLib("scala", {"SCALA_HOME": env.package_home_directory('scala'),
-                                   "PATH": "PATH=$PATH:$SCALA_HOME/bin"}),
+                                   "PATH": "$PATH:$SCALA_HOME/bin"}),
             SetupJavaLib("spark", {"SPARK_HOME": env.package_home_directory('spark'),
-                                   "PATH": "PATH=$PATH:$SPARK_HOME/bin"}),
+                                   "PATH": "$PATH:$SPARK_HOME/bin"}),
             # SetupJavaLib("hadoop", {"SPARK_HOME": f"{env.package_home('spark')}",
             #                         "PATH": "PATH=$PATH:$SPARK_HOME/bin"}),
         ]
