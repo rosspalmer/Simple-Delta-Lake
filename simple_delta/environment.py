@@ -49,4 +49,4 @@ class SimpleEnvironment:
         return f"{self.config.simple_home}/libs"
 
     def package_home_directory(self, package: str) -> str:
-        return f"{self.libs_directory()}/{package}"
+        return f"{self.libs_directory()}/{self.package_names[package]}"

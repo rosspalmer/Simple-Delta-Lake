@@ -44,7 +44,8 @@ class SetupJavaLib(SetupTask):
         urllib.request.urlretrieve(download_url, download_path)
 
         lib_tarfile = tarfile.open(download_path, "r")
-        lib_tarfile.extractall(lib_path)
+        lib_tarfile.extractall(env.libs_path)
+        lib_tarfile.close()
         os.remove(download_path)
 
         print(f"Updating profile script at: {env.config.profile_path}")
