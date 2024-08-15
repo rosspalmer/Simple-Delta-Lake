@@ -1,21 +1,12 @@
-from dataclasses import dataclass
+
 from typing import Dict
 
-
-@dataclass
-class SimpleEnvironmentConfig:
-    name: str
-    simple_home: str
-    profile_path: str
-    java_version: str = "11.0.21+9"
-    hadoop_version: str = "3.2.4"
-    scala_version: str = "2.12.18"
-    spark_version: str = "3.5.2"
+from simple_delta.config import SimpleDeltaConfig
 
 
 class SimpleEnvironment:
 
-    def __init__(self, config: SimpleEnvironmentConfig):
+    def __init__(self, config: SimpleDeltaConfig):
         self.config = config
         self.libs_path = f"{config.simple_home}/libs"
 
