@@ -41,3 +41,7 @@ class SimpleEnvironment:
 
     def package_home_directory(self, package: str) -> str:
         return f"{self.libs_directory()}/{self.package_names[package]}"
+
+    def spark_config_path(self) -> str:
+        spark_home = self.package_home_directory("spark")
+        return f"{spark_home}/conf/spark-defaults.conf"

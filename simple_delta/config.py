@@ -11,3 +11,4 @@ class SimpleDeltaConfig:
     hadoop_version: str = "3.2.4"
     scala_version: str = "2.12.18"
     spark_version: str = "3.5.2"
+    delta_version: str = "3.2.0"

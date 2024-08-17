@@ -16,21 +16,11 @@ class SetupTask(ABC):
         pass
 
 
-class SetupJob:
-
-    def __init__(self, tasks: List[SetupTask]):
-        self.tasks = tasks
-
-    def run(self, env: SimpleEnvironment):
-
-        for task in self.tasks:
-            task.run(env)
-
-
-@dataclass
 class SetupJavaLib(SetupTask):
-    package: str
-    env_variables: Dict[str, str]
+
+    def __init__(self, package: str,  env_variables: Dict[str, str]):
+        self.package = package
+        self.env_variables = env_variables
 
     def run(self, env: SimpleEnvironment):
 
@@ -56,3 +46,14 @@ class SetupJavaLib(SetupTask):
         with open(env.config.profile_path, 'a') as file:
             for variable_name, variable_value in self.env_variables.items():
                 file.writelines(f'export {variable_name}={variable_value}\n')
+
+
+class SetupDelta(SetupTask):
+
+    def run(self, env: SimpleEnvironment):
+
+        # TODO overwrite delta configs instead of appending
+        with open(env.spark_config_path(), 'a') as spark_config_file:
+            spark_config_file.write(f"spark.jars.packages io.delta:delta-spark_2.12:{env.config.delta_version}")
+            spark_config_file.write("spark.sql.extensions io.delta.sql.DeltaSparkSessionExtension")
+            spark_config_file.write("spark.sql.catalog.spark_catalog org.apache.spark.sql.delta.catalog.DeltaCatalog")
