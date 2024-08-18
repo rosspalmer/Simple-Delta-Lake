@@ -1,11 +1,15 @@
 
+import sys
+
 from simple_delta.build import SimpleBuild
-from simple_delta.config import SimpleDeltaConfig
+from simple_delta.config import SimpleDeltaConfig, read_config
 from simple_delta.environment import SimpleEnvironment
 
 
-# config = SimpleEnvironmentConfig("test", "/Users/rosspalmer/simple",  "/Users/rosspalmer/simple-test/.bashrc")
-config = SimpleDeltaConfig("base", "/opt/simple-lake", "/root/.bashrc")
-env = SimpleEnvironment(config)
+if __name__ == "__main__":
 
-SimpleBuild.run(env)
+    config_file = sys.argv[1]
+    config = read_config(config_file)
+    env = SimpleEnvironment(config)
+
+    SimpleBuild.run(env)
