@@ -52,8 +52,22 @@ class SetupDelta(SetupTask):
 
     def run(self, env: SimpleEnvironment):
 
+        print("Adding Delta libraries to spark_defaults.conf file")
+
         # TODO overwrite delta configs instead of appending
         with open(env.spark_config_path(), 'a') as spark_config_file:
             spark_config_file.write(f"spark.jars.packages io.delta:delta-spark_2.12:{env.config.delta_version}\n")
             spark_config_file.write("spark.sql.extensions io.delta.sql.DeltaSparkSessionExtension\n")
             spark_config_file.write("spark.sql.catalog.spark_catalog org.apache.spark.sql.delta.catalog.DeltaCatalog\n")
+
+
+class SetupWarehouse(SetupTask):
+
+    def run(self, env: SimpleEnvironment):
+
+        print(f"Set sql warehouse path {env.config.warehouse_path} in spark_defaults.conf file")
+
+        # TODO overwrite delta configs instead of appending
+        with open(env.spark_config_path(), 'a') as spark_config_file:
+            spark_config_file.write(f"spark.sql.warehouse.dir {env.config.warehouse_path}\n")
+

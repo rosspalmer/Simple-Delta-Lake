@@ -13,6 +13,7 @@ class SimpleDeltaConfig:
     scala_version: str
     spark_version: str
     delta_version: str
+    warehouse_path: str = ""
 
     def write(self, json_path: str):
         config_dict = asdict(self)
