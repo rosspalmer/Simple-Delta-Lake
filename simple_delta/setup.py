@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 import os
 import tarfile
 from typing import Dict, List
@@ -61,13 +60,24 @@ class SetupDelta(SetupTask):
             spark_config_file.write("spark.sql.catalog.spark_catalog org.apache.spark.sql.delta.catalog.DeltaCatalog\n")
 
 
-class SetupWarehouse(SetupTask):
+class SetupMasterConfig(SetupTask):
 
     def run(self, env: SimpleEnvironment):
 
-        print(f"Set sql warehouse path {env.config.warehouse_path} in spark_defaults.conf file")
+        print(f"Setup master config at {env.spark_config_path()}")
 
         # TODO overwrite delta configs instead of appending
         with open(env.spark_config_path(), 'a') as spark_config_file:
-            spark_config_file.write(f"spark.sql.warehouse.dir {env.config.warehouse_path}\n")
+
+            if env.config.driver_cores:
+                spark_config_file.write(f"spark.driver.cores {env.config.driver_cores}\n")
+
+            if env.config.driver_memory:
+                spark_config_file.write(f"spark.driver.memory {env.config.driver_memory}\n")
+
+            if env.config.worker_memory:
+                spark_config_file.write(f"spark.executor.memory {env.config.worker_memory}\n")
+
+            if env.config.warehouse_path:
+                spark_config_file.write(f"spark.sql.warehouse.dir {env.config.warehouse_path}\n")
 
