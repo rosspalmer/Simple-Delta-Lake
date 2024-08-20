@@ -12,16 +12,16 @@ class SimpleEnvironment:
 
         self.package_urls: Dict[str, str] = {
             "java": "https://github.com/adoptium/temurin11-binaries/releases/download"
-                    f"/jdk-{self.config.java_version.replace('+', '%2B')}",
-            "scala": f"https://downloads.lightbend.com/scala/{self.config.scala_version}",
+                    f"/jdk-{config.get_version('java').replace('+', '%2B')}",
+            "scala": f"https://downloads.lightbend.com/scala/{config.get_version('scala')}",
             # FIXME use spark url which has older versions
-            "spark": f"https://dlcdn.apache.org/spark/spark-{self.config.spark_version}",
+            "spark": f"https://dlcdn.apache.org/spark/spark-{config.get_version('spark')}",
         }
 
         self.package_names: Dict[str, str] = {
-            "java": f"OpenJDK11U-jdk_x64_linux_hotspot_{self.config.java_version.replace('+', '_')}",
-            "scala": f"scala-{self.config.scala_version}",
-            "spark": f"spark-{self.config.spark_version}-bin-hadoop3"
+            "java": f"OpenJDK11U-jdk_x64_linux_hotspot_{config.get_version('java').replace('+', '_')}",
+            "scala": f"scala-{config.get_version('scala')}",
+            "spark": f"spark-{config.get_version('spark')}-bin-hadoop3"
         }
 
         self.package_extensions: Dict[str, str] = {
