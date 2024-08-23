@@ -9,8 +9,9 @@ from simple_delta.environment import SimpleEnvironment
 if __name__ == "__main__":
 
     config_file = sys.argv[1]
-    config = read_config(config_file)
+    local_host = sys.argv[2]
 
-    env = SimpleEnvironment(config)
+    config = read_config(config_file)
+    env = SimpleEnvironment(config, local_host)
 
     SimpleBuild.run(env)
