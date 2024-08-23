@@ -2,7 +2,7 @@
   "name": "delta-core",
   "simple_home": "$HOME/simple-lake",
   "profile_path": "$HOME/.bashrc",
-  "package_versions": {
+  "packages": {
     "java": "11.0.21+9",
     "scala": "2.12.18",
     "spark": "3.5.2",

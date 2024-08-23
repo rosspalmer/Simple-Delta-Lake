@@ -15,7 +15,7 @@ class SimpleDeltaConfig:
     name: str
     simple_home: str
     profile_path: str
-    package_versions: Dict[str, str]
+    packages: Dict[str, str]
     warehouse_path: str = None
     master: ResourceConfig = ResourceConfig("localhost")
     master_cores: int = None
@@ -24,8 +24,8 @@ class SimpleDeltaConfig:
     worker_cores: int = None
     worker_memory: str = None
 
-    def get_version(self, package_name: str) -> str:
-        return self.package_versions[package_name]
+    def get_package_version(self, package_name: str) -> str:
+        return self.packages[package_name]
 
     def write(self, json_path: str):
 
