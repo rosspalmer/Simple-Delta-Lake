@@ -6,8 +6,9 @@ from simple_delta.config import SimpleDeltaConfig
 
 class SimpleEnvironment:
 
-    def __init__(self, config: SimpleDeltaConfig):
+    def __init__(self, config: SimpleDeltaConfig, local_host: str):
         self.config = config
+        self.local_host = local_host
         self.libs_path = f"{config.simple_home}/libs"
 
         self.package_urls: Dict[str, str] = {
@@ -45,3 +46,7 @@ class SimpleEnvironment:
     def spark_config_path(self) -> str:
         spark_home = self.package_home_directory("spark")
         return f"{spark_home}/conf/spark-defaults.conf"
+
+    def spark_env_sh_path(self) -> str:
+        spark_home = self.package_home_directory("spark")
+        return f"{spark_home}/conf/spark-env.sh"

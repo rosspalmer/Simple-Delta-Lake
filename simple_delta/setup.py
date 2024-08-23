@@ -5,6 +5,7 @@ from typing import Dict, List
 
 import urllib.request
 
+from simple_delta.config import ResourceConfig
 from simple_delta.environment import SimpleEnvironment
 
 
@@ -69,11 +70,11 @@ class SetupMasterConfig(SetupTask):
         # TODO overwrite delta configs instead of appending
         with open(env.spark_config_path(), 'a') as spark_config_file:
 
-            if env.config.driver_cores:
-                spark_config_file.write(f"spark.driver.cores {env.config.driver_cores}\n")
+            if env.config.master_cores:
+                spark_config_file.write(f"spark.driver.cores {env.config.master_cores}\n")
 
-            if env.config.driver_memory:
-                spark_config_file.write(f"spark.driver.memory {env.config.driver_memory}\n")
+            if env.config.master_memory:
+                spark_config_file.write(f"spark.driver.memory {env.config.master_memory}\n")
 
             if env.config.worker_memory:
                 spark_config_file.write(f"spark.executor.memory {env.config.worker_memory}\n")
@@ -81,3 +82,24 @@ class SetupMasterConfig(SetupTask):
             if env.config.warehouse_path:
                 spark_config_file.write(f"spark.sql.warehouse.dir {env.config.warehouse_path}\n")
 
+
+class SetupEnvsScript(SetupTask):
+
+    def run(self, env: SimpleEnvironment):
+
+        print(f"Setup spark-env.sh bash script at {env.spark_env_sh_path()}")
+
+        worker_info: ResourceConfig | None = None
+        for worker_config in env.config.workers:
+            if worker_config.host == env.local_host:
+                worker_info = worker_config
+                break
+
+        with open(env.spark_env_sh_path(), 'a') as env_sh_file:
+
+            env_sh_file.write(f'export SPARK_LOCAL_IP="{env.local_host}"')
+            env_sh_file.write(f'export SPARK_HOST_IP="{env.config.master.host}"')
+            env_sh_file.write(f'export SPARK_WORKER_CORES={env.config.worker_cores}')
+            env_sh_file.write(f'export SPARK_WORKER_MEMORY={env.config.worker_memory}')
+            if worker_info:
+                env_sh_file.write(f'export SPARK_WORKER_INSTANCES={worker_info.instances}')
