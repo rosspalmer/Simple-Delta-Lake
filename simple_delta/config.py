@@ -48,6 +48,6 @@ def read_config(*json_path: str) -> SimpleDeltaConfig:
     if 'master' in config_dict:
         config_dict['master'] = ResourceConfig(**config_dict['master'])
     if 'workers' in config_dict:
-        config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict))
+        config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict['workers']))
 
     return SimpleDeltaConfig(**config_dict)
