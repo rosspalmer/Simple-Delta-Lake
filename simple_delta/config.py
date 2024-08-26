@@ -8,7 +8,7 @@ from typing import Dict, List
 class ResourceConfig:
     host: str
     cores: int = None
-    memory: int = None
+    memory: str = None
     instances: int = None
 
 
@@ -21,6 +21,7 @@ class SimpleDeltaConfig:
     warehouse_path: str = None
     master: ResourceConfig = None
     workers: List[ResourceConfig] = list
+    executor_memory: str = None
 
     def get_package_version(self, package_name: str) -> str:
         return self.packages[package_name]

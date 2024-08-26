@@ -56,7 +56,8 @@ class SetupDelta(SetupTask):
 
         # TODO overwrite delta configs instead of appending
         with open(env.spark_config_path(), 'a') as spark_config_file:
-            spark_config_file.write(f"spark.jars.packages io.delta:delta-spark_2.12:{env.config.delta_version}\n")
+            spark_config_file \
+                .write(f"spark.jars.packages io.delta:delta-spark_2.12:{env.config.get_package_version('delta')}\n")
             spark_config_file.write("spark.sql.extensions io.delta.sql.DeltaSparkSessionExtension\n")
             spark_config_file.write("spark.sql.catalog.spark_catalog org.apache.spark.sql.delta.catalog.DeltaCatalog\n")
 
@@ -70,14 +71,14 @@ class SetupMasterConfig(SetupTask):
         # TODO overwrite delta configs instead of appending
         with open(env.spark_config_path(), 'a') as spark_config_file:
 
-            if env.config.master_cores:
-                spark_config_file.write(f"spark.driver.cores {env.config.master_cores}\n")
+            if env.config.master and env.config.master.cores:
+                spark_config_file.write(f"spark.driver.cores {env.config.master.cores}\n")
 
-            if env.config.master_memory:
-                spark_config_file.write(f"spark.driver.memory {env.config.master_memory}\n")
+            if env.config.master and env.config.master.memory:
+                spark_config_file.write(f"spark.driver.memory {env.config.master.memory}\n")
 
-            if env.config.worker_memory:
-                spark_config_file.write(f"spark.executor.memory {env.config.worker_memory}\n")
+            if env.config.executor_memory:
+                spark_config_file.write(f"spark.executor.memory {env.config.executor_memory}\n")
 
             if env.config.warehouse_path:
                 spark_config_file.write(f"spark.sql.warehouse.dir {env.config.warehouse_path}\n")
