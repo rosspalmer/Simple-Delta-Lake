@@ -1,7 +1,4 @@
 {
-  "name": "delta-core",
-  "simple_home": "$HOME/simple-lake",
-  "profile_path": "$HOME/.bashrc",
   "packages": {
     "java": "11.0.21+9",
     "scala": "2.12.18",
