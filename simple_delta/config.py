@@ -19,7 +19,7 @@ class SimpleDeltaConfig:
     profile_path: str
     packages: Dict[str, str]
     warehouse_path: str = None
-    master: ResourceConfig = ResourceConfig("localhost")
+    master: ResourceConfig = None
     workers: List[ResourceConfig] = list
 
     def get_package_version(self, package_name: str) -> str:
