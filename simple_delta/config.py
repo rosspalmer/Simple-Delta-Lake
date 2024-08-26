@@ -7,7 +7,9 @@ from typing import Dict, List
 @dataclass
 class ResourceConfig:
     host: str
-    instances: int = 1
+    cores: int = None
+    memory: int = None
+    instances: int = None
 
 
 @dataclass
@@ -18,11 +20,7 @@ class SimpleDeltaConfig:
     packages: Dict[str, str]
     warehouse_path: str = None
     master: ResourceConfig = ResourceConfig("localhost")
-    master_cores: int = None
-    master_memory: str = None
     workers: List[ResourceConfig] = list
-    worker_cores: int = None
-    worker_memory: str = None
 
     def get_package_version(self, package_name: str) -> str:
         return self.packages[package_name]
@@ -39,14 +37,17 @@ class SimpleDeltaConfig:
             json.dump(config_dict, write_file)
 
 
-def read_config(json_path: str) -> SimpleDeltaConfig:
+def read_config(*json_path: str) -> SimpleDeltaConfig:
 
-    with open(json_path, 'r') as read_file:
+    config_dict = {}
 
-        config_dict = json.load(read_file)
-        if 'master' in config_dict:
-            config_dict['master'] = ResourceConfig(**config_dict['master'])
-        if 'workers' in config_dict:
-            config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict))
+    for path in json_path:
+        with open(path, 'r') as read_file:
+            config_dict = config_dict | json.load(read_file)
 
-        return SimpleDeltaConfig(**config_dict)
+    if 'master' in config_dict:
+        config_dict['master'] = ResourceConfig(**config_dict['master'])
+    if 'workers' in config_dict:
+        config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict))
+
+    return SimpleDeltaConfig(**config_dict)
