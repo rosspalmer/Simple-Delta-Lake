@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+from pprint import pprint
 from typing import Dict, List
 
 from simple_delta.setup import SetupTask
@@ -12,6 +13,10 @@ class SimpleBuild:
     @staticmethod
     def run(env: SimpleEnvironment):
 
+        print("Building environment:")
+        pprint(env.config.__dict__)
+
+        print(f"Simple-Delta HOME directory: {env.config.simple_home}")
         simple_home = Path(env.config.simple_home)
         if not simple_home.exists():
             simple_home.mkdir()
