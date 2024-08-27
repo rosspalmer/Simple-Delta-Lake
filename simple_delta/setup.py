@@ -98,10 +98,12 @@ class SetupEnvsScript(SetupTask):
 
         with open(env.spark_env_sh_path(), 'a') as env_sh_file:
 
-            env_sh_file.write(f'export SPARK_LOCAL_IP="{env.local_host}"')
-            env_sh_file.write(f'export SPARK_HOST_IP="{env.config.master.host}"')
+            print("Writing required environment variables")
+            env_sh_file.write(f'export SPARK_LOCAL_IP="{env.local_host}\n"')
+            env_sh_file.write(f'export SPARK_HOST_IP="{env.config.master.host}\n"')
 
             if worker_info:
-                env_sh_file.write(f'export SPARK_WORKER_CORES={worker_info.cores}')
-                env_sh_file.write(f'export SPARK_WORKER_MEMORY={worker_info}')
-                env_sh_file.write(f'export SPARK_WORKER_INSTANCES={worker_info.instances}')
+                print(f"Found worker spec: {worker_info}")
+                env_sh_file.write(f'export SPARK_WORKER_CORES={worker_info.cores}\n')
+                env_sh_file.write(f'export SPARK_WORKER_MEMORY={worker_info.memory}\n')
+                env_sh_file.write(f'export SPARK_WORKER_INSTANCES={worker_info.instances}\n')
