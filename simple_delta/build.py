@@ -1,10 +1,8 @@
 from pathlib import Path
 import shutil
 from pprint import pprint
-from typing import Dict, List
 
-from simple_delta.setup import SetupTask
-from simple_delta.setup import SetupJavaBin, SetupDelta, SetupMasterConfig, SetupEnvsScript
+from simple_delta.setup import *
 from simple_delta.environment import SimpleEnvironment
 
 
@@ -22,7 +20,7 @@ class SimpleBuild:
             simple_home.mkdir()
         shutil.rmtree(env.libs_path, ignore_errors=True)
 
-        setup_tasks: Dict[str, SetupTask] = {
+        required_tasks: Dict[str, SetupTask] = {
             "install_java": SetupJavaBin("java", {"JAVA_HOME":
                                          f"{env.libs_path}/jdk-{env.config.get_package_version('java')}",
                                          "PATH": "$PATH:$JAVA_HOME/bin"}),
@@ -30,10 +28,23 @@ class SimpleBuild:
                                           "PATH": "$PATH:$SCALA_HOME/bin"}),
             "install_spark": SetupJavaBin("spark", {"SPARK_HOME": env.package_home_directory('spark'),
                                             "PATH": "$PATH:$SPARK_HOME/bin"}),
-            "install_delta": SetupDelta(),
             "setup_master": SetupMasterConfig(),
-            "setup_envs": SetupEnvsScript()
+            "setup_envs": SetupEnvsScript(),
         }
 
-        for task_name, task in setup_tasks.items():
+        optional_tasks: Dict[str, SetupTask] = {
+            "setup_metastore": SetupHiveMetastore(),
+            "install_delta": SetupDelta(),
+        }
+
+        include_optional_tasks: List[str] = []
+        if env.config.metastore_config:
+            include_optional_tasks.append("setup_metastore")
+        if "delta" in env.config.packages:
+            include_optional_tasks.append("install_delta")
+
+        for task_name, task in required_tasks.items():
+            task.run(env)
+
+        for task_name, task in optional_tasks.items():
             task.run(env)

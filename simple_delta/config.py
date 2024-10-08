@@ -15,7 +15,11 @@ class ResourceConfig:
 @dataclass
 class HiveMetastoreConfig:
     db_type: str
-    
+    db_host: str
+    db_port: int
+    db_user: str
+    db_pass: str
+
 
 @dataclass
 class SimpleDeltaConfig:
@@ -40,6 +44,8 @@ class SimpleDeltaConfig:
             config_dict['master'] = asdict(config_dict['master'])
         if self.workers:
             config_dict['workers'] = list(map(lambda x: asdict(x), config_dict['workers']))
+        if self.metastore_config:
+            config_dict['metastore_config'] = asdict(config_dict['metastore_config'])
 
         with open(json_path, 'w') as write_file:
             json.dump(config_dict, write_file)
@@ -57,5 +63,7 @@ def read_config(*json_path: str) -> SimpleDeltaConfig:
         config_dict['master'] = ResourceConfig(**config_dict['master'])
     if 'workers' in config_dict:
         config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict['workers']))
+    if 'metastore_config' in config_dict:
+        config_dict['metastore_config'] = HiveMetastoreConfig(**config_dict['metastore_config'])
 
     return SimpleDeltaConfig(**config_dict)

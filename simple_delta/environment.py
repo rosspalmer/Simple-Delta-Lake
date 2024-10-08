@@ -43,10 +43,14 @@ class SimpleEnvironment:
     def package_home_directory(self, package: str) -> str:
         return f"{self.libs_directory()}/{self.package_names[package]}"
 
+    def spark_home(self) -> str:
+        return self.package_home_directory("spark")
+
     def spark_config_path(self) -> str:
-        spark_home = self.package_home_directory("spark")
-        return f"{spark_home}/conf/spark-defaults.conf"
+        return f"{self.spark_home()}/conf/spark-defaults.conf"
 
     def spark_env_sh_path(self) -> str:
-        spark_home = self.package_home_directory("spark")
-        return f"{spark_home}/conf/spark-env.sh"
+        return f"{self.spark_home()}/conf/spark-env.sh"
+
+    def hive_config_path(self) -> str:
+        return f"{self.spark_home()}/conf/hive-site.xml"

@@ -5,7 +5,7 @@ from typing import Dict, List
 
 import urllib.request
 
-from simple_delta.config import ResourceConfig
+from simple_delta.config import ResourceConfig, HiveMetastoreConfig
 from simple_delta.environment import SimpleEnvironment
 
 
@@ -128,8 +128,75 @@ class SetupEnvsScript(SetupTask):
 
 class SetupHiveMetastore(SetupTask):
 
+    JDBC_DRIVERS = {
+        "mssql": "TODO",
+        "mysql": "com.mysql.cj.jdbc.Driver",
+        "oracle": "TODO",
+        "postgres": "org.postgresql.Driver",
+    }
+
+    @staticmethod
+    def jdbc_url(config: HiveMetastoreConfig) -> str:
+
+        URL_PREFIXES = {
+            "mssql": "sqlserver",
+            "mysql": "mysql",
+            "oracle": "oracle",
+            "postgres": "postgresql"
+        }
+        prefix = URL_PREFIXES[config.db_type]
+
+        return f"jdbc:{prefix}://{config.db_host}:{config.db_port}/metastore_db"
+
+    @staticmethod
+    def generate_hive_site_xml(env: SimpleEnvironment) -> str:
+
+        config = env.config.metastore_config
+
+        xml = f"""<configuration>
+        <property>
+            <name>javax.jdo.option.ConnectionURL</name>
+            <value>{SetupHiveMetastore.jdbc_url(config)}</value>
+        </property>
+        <property>
+            <name>javax.jdo.option.ConnectionDriverName</name>
+            <value>{SetupHiveMetastore.JDBC_DRIVERS[config.db_type]}</value>
+        </property>
+        <property>
+            <name>javax.jdo.option.ConnectionUserName</name>
+            <value>{config.db_user}</value>
+        </property>
+        <property>
+            <name>javax.jdo.option.ConnectionPassword</name>
+            <value>{config.db_pass}</value>
+        </property>
+        <property>
+            <name>hive.metastore.warehouse.dir</name>
+            <value>{env.config.warehouse_path}</value>
+        </property>
+        <property>
+            <name>hive.metastore.db.type</name>
+            <value>{config.db_type}</value>
+        </property>
+        """
+
+        return xml
+
     def run(self, env: SimpleEnvironment):
 
         config = env.config.metastore_config
         if config is None:
             raise Exception("Must specify `metastore_config` to setup Hive metastore")
+
+        supported_types = SetupHiveMetastore.JDBC_DRIVERS.keys()
+        if config.db_type not in supported_types:
+            raise Exception(
+                f"Metastore db_type '{config.db_type}' not a supported type: [{','.join(supported_types)}]"
+            )
+
+        self._download_driver_jar(env)
+        with open(env.hive_config_path(), "w") as hc:
+            hc.write(self.generate_hive_site_xml(env))
+
+    def _download_driver_jar(self, env: SimpleEnvironment):
+        pass
