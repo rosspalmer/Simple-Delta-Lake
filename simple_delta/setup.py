@@ -16,7 +16,7 @@ class SetupTask(ABC):
         pass
 
 
-class InstallJavaLib(SetupTask):
+class SetupJavaBin(SetupTask):
 
     def __init__(self, package: str,  env_variables: Dict[str, str]):
         self.package = package
@@ -46,6 +46,19 @@ class InstallJavaLib(SetupTask):
         with open(env.config.profile_path, 'a') as file:
             for variable_name, variable_value in self.env_variables.items():
                 file.writelines(f'export {variable_name}={variable_value}\n')
+
+
+class SetupMavenJar(SetupTask):
+
+    def __init__(self, group_id: str, artifact_id: str, version: str):
+
+        self.MAVEN_URL = "https://repo1.maven.org/maven2"
+        self.JAR_FILE = f"{artifact_id}-{version}.jar"
+        self.PACKAGE_URL = f"{self.MAVEN_URL}/{group_id.replace('.', '/')}/{artifact_id}/{version}/{self.JAR_FILE}"
+
+    def run(self, env: SimpleEnvironment):
+
+        maven_url = "https://repo1.maven.org/maven2"
 
 
 class SetupDelta(SetupTask):
@@ -80,6 +93,10 @@ class SetupMasterConfig(SetupTask):
             if env.config.executor_memory:
                 spark_config_file.write(f"spark.executor.memory {env.config.executor_memory}\n")
 
+            if env.config.derby_path:
+                spark_config_file.write("spark.driver.extraJavaOptions "
+                                        f"-Dderby.system.home={env.config.derby_path}")
+
             if env.config.warehouse_path:
                 spark_config_file.write(f"spark.sql.warehouse.dir {env.config.warehouse_path}\n")
 
@@ -107,3 +124,12 @@ class SetupEnvsScript(SetupTask):
                 env_sh_file.write(f'export SPARK_WORKER_CORES={worker_info.cores}\n')
                 env_sh_file.write(f'export SPARK_WORKER_MEMORY={worker_info.memory}\n')
                 env_sh_file.write(f'export SPARK_WORKER_INSTANCES={worker_info.instances}\n')
+
+
+class SetupHiveMetastore(SetupTask):
+
+    def run(self, env: SimpleEnvironment):
+
+        config = env.config.metastore_config
+        if config is None:
+            raise Exception("Must specify `metastore_config` to setup Hive metastore")

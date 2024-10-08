@@ -13,12 +13,19 @@ class ResourceConfig:
 
 
 @dataclass
+class HiveMetastoreConfig:
+    db_type: str
+    
+
+@dataclass
 class SimpleDeltaConfig:
     name: str
     simple_home: str
     profile_path: str
     packages: Dict[str, str]
+    derby_path: str = None
     warehouse_path: str = None
+    metastore_config: HiveMetastoreConfig = None
     master: ResourceConfig = None
     workers: List[ResourceConfig] = list
     executor_memory: str = None
