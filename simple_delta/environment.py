@@ -16,7 +16,7 @@ class SimpleEnvironment:
                     f"/jdk-{config.get_package_version('java').replace('+', '%2B')}",
             "scala": f"https://downloads.lightbend.com/scala/{config.get_package_version('scala')}",
             # FIXME use spark url which has older versions
-            "spark": f"https://dlcdn.apache.org/spark/spark-{config.get_package_version('spark')}",
+            "spark": f"https://archive.apache.org/dist/spark/{config.get_package_version('spark')}",
         }
 
         self.package_names: Dict[str, str] = {

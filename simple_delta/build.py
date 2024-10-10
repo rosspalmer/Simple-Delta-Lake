@@ -22,12 +22,12 @@ class SimpleBuild:
 
         required_tasks: Dict[str, SetupTask] = {
             "install_java": SetupJavaBin("java", {"JAVA_HOME":
-                                         f"{env.libs_path}/jdk-{env.config.get_package_version('java')}",
+                                                  f"{env.libs_path}/jdk-{env.config.get_package_version('java')}",
                                          "PATH": "$PATH:$JAVA_HOME/bin"}),
             "install_scala": SetupJavaBin("scala", {"SCALA_HOME": env.package_home_directory('scala'),
                                           "PATH": "$PATH:$SCALA_HOME/bin"}),
             "install_spark": SetupJavaBin("spark", {"SPARK_HOME": env.package_home_directory('spark'),
-                                            "PATH": "$PATH:$SPARK_HOME/bin"}),
+                                          "PATH": "$PATH:$SPARK_HOME/bin"}),
             "setup_master": SetupMasterConfig(),
             "setup_envs": SetupEnvsScript(),
         }
@@ -46,5 +46,6 @@ class SimpleBuild:
         for task_name, task in required_tasks.items():
             task.run(env)
 
-        for task_name, task in optional_tasks.items():
+        for task_name in include_optional_tasks:
+            task = optional_tasks[task_name]
             task.run(env)
