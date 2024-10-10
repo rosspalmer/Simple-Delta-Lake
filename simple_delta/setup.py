@@ -3,10 +3,11 @@ import os
 import tarfile
 from typing import Dict, List
 
-import urllib.request
+from urllib.request import urlretrieve
 
 from simple_delta.config import ResourceConfig, HiveMetastoreConfig
 from simple_delta.environment import SimpleEnvironment
+from simple_delta.maven import MavenDownloader
 
 
 class SetupTask(ABC):
@@ -31,7 +32,7 @@ class SetupJavaBin(SetupTask):
         print(f"Downloading {self.package} binary from:")
         print(download_url)
 
-        urllib.request.urlretrieve(download_url, download_path)
+        urlretrieve(download_url, download_path)
 
         lib_tarfile = tarfile.open(download_path, "r")
         lib_tarfile.extractall(env.libs_path)
@@ -135,6 +136,13 @@ class SetupHiveMetastore(SetupTask):
         "postgres": "org.postgresql.Driver",
     }
 
+    JDBC_PACKAGES = {
+        "mssql": [],
+        "mysql": [],
+        "oracle": [],
+        "postgres": ["org.postgresql", "postgresql", "42.7.4"]
+    }
+
     @staticmethod
     def jdbc_url(config: HiveMetastoreConfig) -> str:
 
@@ -194,9 +202,5 @@ class SetupHiveMetastore(SetupTask):
                 f"Metastore db_type '{config.db_type}' not a supported type: [{','.join(supported_types)}]"
             )
 
-        self._download_driver_jar(env)
         with open(env.hive_config_path(), "w") as hc:
             hc.write(self.generate_hive_site_xml(env))
-
-    def _download_driver_jar(self, env: SimpleEnvironment):
-        pass

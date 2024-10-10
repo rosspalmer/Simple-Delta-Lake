@@ -22,6 +22,14 @@ class HiveMetastoreConfig:
 
 
 @dataclass
+class MavenJar:
+    group_id: str
+    artifact_id: str
+    version: str
+    main_class: str = None
+
+
+@dataclass
 class SimpleDeltaConfig:
     name: str
     simple_home: str
@@ -33,6 +41,7 @@ class SimpleDeltaConfig:
     master: ResourceConfig = None
     workers: List[ResourceConfig] = list
     executor_memory: str = None
+    jdbc_drivers: dict[str, MavenJar] = None
 
     def get_package_version(self, package_name: str) -> str:
         return self.packages[package_name]
