@@ -1,8 +1,6 @@
 
 from dataclasses import dataclass, asdict
 import json
-from pprint import pprint
-from typing import Dict, List
 
 
 @dataclass
@@ -35,7 +33,7 @@ class SimpleDeltaConfig:
     name: str
     simple_home: str
     profile_path: str
-    packages: Dict[str, str]
+    packages: dict[str, str]
     driver: ResourceConfig
     derby_path: str = None
     warehouse_path: str = None
@@ -53,6 +51,31 @@ class SimpleDeltaConfig:
 
     def get_package_version(self, package_name: str) -> str:
         return self.packages[package_name]
+
+    def write(self, json_path: str):
+
+        as_string = str(self)
+
+        with open(json_path, 'w') as write_file:
+            write_file.write(as_string)
+
+    @staticmethod
+    def read(*json_path: str):
+
+        config_dict = {}
+
+        for path in json_path:
+            with open(path, 'r') as read_file:
+                config_dict = config_dict | json.load(read_file)
+
+        if 'master' in config_dict:
+            config_dict['master'] = ResourceConfig(**config_dict['master'])
+        if 'workers' in config_dict:
+            config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict['workers']))
+        if 'metastore_config' in config_dict:
+            config_dict['metastore_config'] = HiveMetastoreConfig(**config_dict['metastore_config'])
+
+        return SimpleDeltaConfig(**config_dict)
 
     @staticmethod
     def generate_template_json() -> str:
@@ -98,28 +121,3 @@ class SimpleDeltaConfig:
         )
 
         return str(template)
-
-    def write(self, json_path: str):
-
-        as_string = str(self)
-
-        with open(json_path, 'w') as write_file:
-            write_file.write(as_string)
-
-
-def read_config(*json_path: str) -> SimpleDeltaConfig:
-
-    config_dict = {}
-
-    for path in json_path:
-        with open(path, 'r') as read_file:
-            config_dict = config_dict | json.load(read_file)
-
-    if 'master' in config_dict:
-        config_dict['master'] = ResourceConfig(**config_dict['master'])
-    if 'workers' in config_dict:
-        config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict['workers']))
-    if 'metastore_config' in config_dict:
-        config_dict['metastore_config'] = HiveMetastoreConfig(**config_dict['metastore_config'])
-
-    return SimpleDeltaConfig(**config_dict)

@@ -85,11 +85,11 @@ class SetupMasterConfig(SetupTask):
         # TODO overwrite delta configs instead of appending
         with open(env.spark_config_path(), 'a') as spark_config_file:
 
-            if env.config.master and env.config.master.cores:
-                spark_config_file.write(f"spark.driver.cores {env.config.master.cores}\n")
+            if env.config.driver and env.config.driver.cores:
+                spark_config_file.write(f"spark.driver.cores {env.config.driver.cores}\n")
 
-            if env.config.master and env.config.master.memory:
-                spark_config_file.write(f"spark.driver.memory {env.config.master.memory}\n")
+            if env.config.driver and env.config.driver.memory:
+                spark_config_file.write(f"spark.driver.memory {env.config.driver.memory}\n")
 
             if env.config.executor_memory:
                 spark_config_file.write(f"spark.executor.memory {env.config.executor_memory}\n")
@@ -118,7 +118,7 @@ class SetupEnvsScript(SetupTask):
 
             print("Writing required environment variables")
             env_sh_file.write(f'export SPARK_LOCAL_IP={env.local_host}\n')
-            env_sh_file.write(f'export SPARK_HOST_IP={env.config.master.host}\n')
+            env_sh_file.write(f'export SPARK_HOST_IP={env.config.driver.host}\n')
 
             if worker_info:
                 print(f"Found worker spec: {worker_info}")
