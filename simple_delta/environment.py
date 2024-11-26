@@ -1,10 +1,5 @@
-from pathlib import Path
-from pprint import pprint
-from typing import Dict
-from shutil import rmtree
 
-from simple_delta.config import SimpleDeltaConfig
-from simple_delta.setup import *
+from simple_delta.config import SimpleDeltaConfig, ResourceConfig
 from simple_delta.utils import get_ip
 
 
@@ -37,7 +32,7 @@ class SimpleEnvironment:
 
         self.resource_config = _get_resource_config()
 
-        self.package_urls: Dict[str, str] = {
+        self.package_urls: dict[str, str] = {
             "java": "https://github.com/adoptium/temurin11-binaries/releases/download"
                     f"/jdk-{config.get_package_version('java').replace('+', '%2B')}",
             "scala": f"https://downloads.lightbend.com/scala/{config.get_package_version('scala')}",
@@ -45,13 +40,13 @@ class SimpleEnvironment:
             "spark": f"https://archive.apache.org/dist/spark/{config.get_package_version('spark')}",
         }
 
-        self.package_names: Dict[str, str] = {
+        self.package_names: dic[str, str] = {
             "java": f"OpenJDK11U-jdk_x64_linux_hotspot_{config.get_package_version('java').replace('+', '_')}",
             "scala": f"scala-{config.get_package_version('scala')}",
             "spark": f"spark-{config.get_package_version('spark')}-bin-hadoop3"
         }
 
-        self.package_extensions: Dict[str, str] = {
+        self.package_extensions: dict[str, str] = {
             "java": "tar.gz",
             "scala": "tgz",
             "spark": "tgz"
@@ -83,51 +78,3 @@ class SimpleEnvironment:
 
     def hive_config_path(self) -> str:
         return f"{self.spark_home()}/conf/hive-site.xml"
-
-    def sync(self):
-
-        print("Syncing environment:")
-        pprint(self.config.__dict__)
-
-        print(f"Simple-Delta HOME directory: {self.config.simple_home}")
-        simple_home = Path(self.config.simple_home)
-        if not simple_home.exists():
-            simple_home.mkdir()
-        rmtree(self.libs_path, ignore_errors=True)
-
-        required_tasks: Dict[str, SetupTask] = {
-            "java": SetupJavaBin("java", {
-                "JAVA_HOME": f"{self.libs_path}/jdk-{self.config.get_package_version('java')}",
-                "PATH": "$PATH:$JAVA_HOME/bin"}),
-            "scala": SetupJavaBin("scala", {
-                "SCALA_HOME": self.package_home_directory('scala'),
-                "PATH": "$PATH:$SCALA_HOME/bin"}),
-            "spark": SetupJavaBin("spark", {
-                "SPARK_HOME": self.package_home_directory('spark'),
-                "PATH": "$PATH:$SPARK_HOME/bin"}),
-            "setup_driver": SetupDriverConfig(),
-            "setup_envs": SetupEnvsScript(),
-        }
-
-        optional_tasks: Dict[str, SetupTask] = {
-            "setup_metastore": SetupHiveMetastore(),
-            "setup_jars": SetupMavenJar(),
-            "delta": SetupDelta()
-        }
-
-        include_optional_tasks: List[str] = []
-        if self.config.jdbc_drivers:
-            include_optional_tasks.append('setup_jars')
-        if self.config.metastore_config:
-            include_optional_tasks.append("setup_metastore")
-        if "delta" in self.config.packages:
-            include_optional_tasks.append("delta")
-
-        for task_name, task in required_tasks.items():
-            print(f'Running task {task_name}')
-            task.run(self)
-
-        for task_name in include_optional_tasks:
-            print(f'Running task {task_name}')
-            task = optional_tasks[task_name]
-            task.run(self)
