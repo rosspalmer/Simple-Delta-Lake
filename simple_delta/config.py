@@ -1,6 +1,7 @@
 
 from dataclasses import dataclass, asdict
 import json
+from pprint import pprint
 from typing import Dict, List
 
 
@@ -35,46 +36,43 @@ class SimpleDeltaConfig:
     simple_home: str
     profile_path: str
     packages: Dict[str, str]
-    master: ResourceConfig
+    driver: ResourceConfig
     derby_path: str = None
     warehouse_path: str = None
     metastore_config: HiveMetastoreConfig = None
-    workers: List[ResourceConfig] = list
+    workers: list[ResourceConfig] = None
     executor_memory: str = None
     jdbc_drivers: dict[str, MavenJar] = None
 
-    def __str__(self):
+    def __str__(self) -> str:
 
         config_dict = asdict(self)
-        if self.master:
-            config_dict['master'] = asdict(config_dict['master'])
-        if self.workers:
-            config_dict['workers'] = list(map(lambda x: asdict(x), config_dict['workers']))
-        if self.metastore_config:
-            config_dict['metastore_config'] = asdict(config_dict['metastore_config'])
+        json_string = json.dumps(config_dict, indent=2)
 
-        return json.dumps(config_dict)
+        return json_string
 
     def get_package_version(self, package_name: str) -> str:
         return self.packages[package_name]
 
-    def generate_template_json(self) -> str:
+    @staticmethod
+    def generate_template_json() -> str:
+
         template = SimpleDeltaConfig(
             name='<SETUP-NAME>',
             simple_home='<SIMPLE-SPARK-DIR>',
             profile_path='<PATH-TO-PROFILE-FILE>',
             packages={
-                'java': '<OPENJDK-JAVA-VERSION>',
-                'scala': '<SPARK-COMPATIBLE-SCALA-VERSION>',
-                'spark': '<SPARK-VERSION>',
-                'delta': '<OPTIONAL-DELTA-VERSION>',
-                'hadoop': '<OPTIONAL-HADOOP-VERSION>',
-                'hive': '<OPTIONAL-HIVE-VERSION>'
+                'java': '11.0.21+9',
+                'scala': '2.12.18',
+                'spark': '3.5.2',
+                'delta': '3.2.0',
+                'hadoop': '3.3.1',
+                'hive': '3.1.2'
             },
-            master=ResourceConfig(
-                host='<MASTER-IP-ADDRESS>',
+            driver=ResourceConfig(
+                host='<DRIVER-IP-ADDRESS>',
                 cores=4,
-                memory='4G'
+                memory='8G'
             ),
             derby_path='<OPTIONAL-PATH-TO-LOCAL-DERBY-CATALOG>',
             warehouse_path='<OPTIONAL-PATH-TO-LOCAL-WAREHOUSE>',
@@ -95,9 +93,8 @@ class SimpleDeltaConfig:
             ],
             executor_memory='8G',
             jdbc_drivers={
-                'mysql': MavenJar('TODO', 'TODO', 'TODO'),
+                'postgres': MavenJar("org.postgresql", "postgresql", "42.7.4", "org.postgresql.Driver")
             }
-
         )
 
         return str(template)
