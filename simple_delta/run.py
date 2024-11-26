@@ -63,7 +63,7 @@ def run(env: SimpleEnvironment):
 if __name__ == "__main__":
 
     config_files: List[str] = sys.argv[1].split(',')
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 2:
         local_host = sys.argv[2]
     else:
         local_host = ''
