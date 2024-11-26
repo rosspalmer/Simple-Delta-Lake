@@ -86,6 +86,8 @@ class SimpleDeltaConfig:
             config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict['workers']))
         if 'metastore_config' in config_dict:
             config_dict['metastore_config'] = JdbcConfig(**config_dict['metastore_config'])
+        if 'jdbc_drivers' in config_dict:
+            config_dict['jdbc_drivers'] = {k: MavenJar(**v) for k, v in config_dict['jdbc_drivers'].items()}
 
         return SimpleDeltaConfig(**config_dict)
 
