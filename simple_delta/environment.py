@@ -1,7 +1,10 @@
-
+from pathlib import Path
+from pprint import pprint
 from typing import Dict
+from shutil import rmtree
 
 from simple_delta.config import SimpleDeltaConfig
+from simple_delta.setup import *
 
 
 class SimpleEnvironment:
@@ -57,3 +60,46 @@ class SimpleEnvironment:
 
     def hive_config_path(self) -> str:
         return f"{self.spark_home()}/conf/hive-site.xml"
+
+    def sync(self):
+
+        print("Syncing environment:")
+        pprint(self.config.__dict__)
+
+        print(f"Simple-Delta HOME directory: {self.config.simple_home}")
+        simple_home = Path(self.config.simple_home)
+        if not simple_home.exists():
+            simple_home.mkdir()
+        rmtree(self.libs_path, ignore_errors=True)
+
+        required_tasks: Dict[str, SetupTask] = {
+            "install_java": SetupJavaBin("java", {
+                "JAVA_HOME": f"{self.libs_path}/jdk-{self.config.get_package_version('java')}",
+                "PATH": "$PATH:$JAVA_HOME/bin"}),
+            "install_scala": SetupJavaBin("scala", {
+                "SCALA_HOME": self.package_home_directory('scala'),
+                "PATH": "$PATH:$SCALA_HOME/bin"}),
+            "install_spark": SetupJavaBin("spark", {
+                "SPARK_HOME": self.package_home_directory('spark'),
+                "PATH": "$PATH:$SPARK_HOME/bin"}),
+            "setup_master": SetupMasterConfig(),
+            "setup_envs": SetupEnvsScript(),
+        }
+
+        optional_tasks: Dict[str, SetupTask] = {
+            "setup_metastore": SetupHiveMetastore(),
+            "install_delta": SetupDelta(),
+        }
+
+        include_optional_tasks: List[str] = []
+        if self.config.metastore_config:
+            include_optional_tasks.append("setup_metastore")
+        if "delta" in self.config.packages:
+            include_optional_tasks.append("install_delta")
+
+        for task_name, task in required_tasks.items():
+            task.run(self)
+
+        for task_name in include_optional_tasks:
+            task = optional_tasks[task_name]
+            task.run(self)
