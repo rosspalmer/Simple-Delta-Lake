@@ -40,7 +40,7 @@ class SimpleEnvironment:
             "spark": f"https://archive.apache.org/dist/spark/spark-{config.get_package_version('spark')}",
         }
 
-        self.package_names: dic[str, str] = {
+        self.package_names: dict[str, str] = {
             "java": f"OpenJDK11U-jdk_x64_linux_hotspot_{config.get_package_version('java').replace('+', '_')}",
             "scala": f"scala-{config.get_package_version('scala')}",
             "spark": f"spark-{config.get_package_version('spark')}-bin-hadoop3"
