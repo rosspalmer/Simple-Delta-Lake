@@ -12,12 +12,25 @@ class ResourceConfig:
 
 
 @dataclass
-class HiveMetastoreConfig:
+class JdbcConfig:
     db_type: str
     db_host: str
     db_port: int
     db_user: str
     db_pass: str
+    jdbc_driver: str
+
+    def get_url(self) -> str:
+
+        URL_PREFIXES = {
+            "mssql": "sqlserver",
+            "mysql": "mysql",
+            "oracle": "oracle",
+            "postgres": "postgresql"
+        }
+        prefix = URL_PREFIXES[self.db_type]
+
+        return f"jdbc:{prefix}://{self.db_host}:{self.db_port}/metastore_db"
 
 
 @dataclass
@@ -25,7 +38,6 @@ class MavenJar:
     group_id: str
     artifact_id: str
     version: str
-    main_class: str = None
 
 
 @dataclass
@@ -37,7 +49,7 @@ class SimpleDeltaConfig:
     driver: ResourceConfig
     derby_path: str = None
     warehouse_path: str = None
-    metastore_config: HiveMetastoreConfig = None
+    metastore_config: JdbcConfig = None
     workers: list[ResourceConfig] = None
     executor_memory: str = None
     jdbc_drivers: dict[str, MavenJar] = None
@@ -68,12 +80,12 @@ class SimpleDeltaConfig:
             with open(path, 'r') as read_file:
                 config_dict = config_dict | json.load(read_file)
 
-        if 'master' in config_dict:
-            config_dict['master'] = ResourceConfig(**config_dict['master'])
+        if 'driver' in config_dict:
+            config_dict['driver'] = ResourceConfig(**config_dict['driver'])
         if 'workers' in config_dict:
             config_dict['workers'] = list(map(lambda x: ResourceConfig(**x), config_dict['workers']))
         if 'metastore_config' in config_dict:
-            config_dict['metastore_config'] = HiveMetastoreConfig(**config_dict['metastore_config'])
+            config_dict['metastore_config'] = JdbcConfig(**config_dict['metastore_config'])
 
         return SimpleDeltaConfig(**config_dict)
 
@@ -99,12 +111,13 @@ class SimpleDeltaConfig:
             ),
             derby_path='<OPTIONAL-PATH-TO-LOCAL-DERBY-CATALOG>',
             warehouse_path='<OPTIONAL-PATH-TO-LOCAL-WAREHOUSE>',
-            metastore_config=HiveMetastoreConfig(
+            metastore_config=JdbcConfig(
                 db_type='<mysql/postgres/oracle>',
                 db_host='<DATABASE-IP-ADDRESS>',
                 db_port=0,
                 db_user='<DATABASE-LOGIN-USERNAME>',
-                db_pass='<DATABASE-LOGIN-PASSWORD>'
+                db_pass='<DATABASE-LOGIN-PASSWORD>',
+                jdbc_driver='<JAVA-PATH-TO-CLASS>'
             ),
             workers=[
                 ResourceConfig(
@@ -116,7 +129,7 @@ class SimpleDeltaConfig:
             ],
             executor_memory='8G',
             jdbc_drivers={
-                'postgres': MavenJar("org.postgresql", "postgresql", "42.7.4", "org.postgresql.Driver")
+                'postgres': MavenJar("org.postgresql", "postgresql", "42.7.4")
             }
         )
 

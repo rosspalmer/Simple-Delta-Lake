@@ -21,6 +21,7 @@ if __name__ == "__main__":
     file = '/Users/rosspalmer/Desktop/sega.json'
 
     config = SimpleDeltaConfig.read(file)
+    env = SimpleEnvironment(config)
 
-    pprint(config)
+    pprint(env)
 

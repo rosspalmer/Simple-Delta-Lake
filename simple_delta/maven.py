@@ -1,19 +1,24 @@
 
 from urllib.request import urlretrieve
 
+from simple_delta.config import MavenJar
+
 
 class MavenDownloader:
-    BASE_URL="https://repo1.maven.org/maven2"
+    BASE_URL = "https://repo1.maven.org/maven2"
 
     @staticmethod
-    def maven_url(group_id: str, artifact_id: str, version: str) -> str:
-        package_url = f"{group_id.replace('.','/')}/{artifact_id}/{version}"
+    def maven_url(maven_jar: MavenJar) -> str:
+        package_url = f"{maven_jar.group_id.replace('.','/')}/{maven_jar.artifact_id}/{maven_jar.version}"
         return f"{MavenDownloader.BASE_URL}/{package_url}"
 
     @staticmethod
-    def download_jar(group_id: str, artifact_id: str, version: str, download_folder: str):
-        jar_filename = f"{artifact_id}-{version}.jar"
-        urlretrieve(
-            f"{MavenDownloader.maven_url(group_id, artifact_id, version)}/{jar_filename}",
-            f"{download_folder}/{jar_filename}"
-        )
+    def download_jar(maven_jar: MavenJar, download_folder: str):
+
+        maven_url = MavenDownloader.maven_url(maven_jar)
+        jar_filename = f"{maven_jar.artifact_id}-{maven_jar.version}.jar"
+        maven_jar_path = f"{maven_url}/{jar_filename}"
+        download_path = f"{download_folder}/{jar_filename}"
+
+        print(f'Downloading JAR from {maven_jar_path} to {download_path}')
+        urlretrieve(maven_jar_path, download_path)

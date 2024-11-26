@@ -5,14 +5,37 @@ from shutil import rmtree
 
 from simple_delta.config import SimpleDeltaConfig
 from simple_delta.setup import *
+from simple_delta.utils import get_ip
 
 
 class SimpleEnvironment:
 
-    def __init__(self, config: SimpleDeltaConfig, local_host: str):
+    def __init__(self, config: SimpleDeltaConfig, local_host: str = ''):
+
         self.config = config
-        self.local_host = local_host
         self.libs_path = f"{config.simple_home}/libs"
+
+        if local_host == '':
+            print('Local host not set, detecting automatically')
+            local_host = get_ip()
+            print(f'Local IP detected: {local_host}')
+        self.local_host = local_host
+
+        self.is_driver = local_host == self.config.driver.host
+
+        def _get_resource_config() -> ResourceConfig:
+
+            if self.is_driver:
+                return self.config.driver
+
+            for worker in self.config.workers:
+                is_worker = local_host == worker.host
+                if is_worker:
+                    return worker
+
+            raise Exception(f'Not able to identify resource with host: {local_host}')
+
+        self.resource_config = _get_resource_config()
 
         self.package_urls: Dict[str, str] = {
             "java": "https://github.com/adoptium/temurin11-binaries/releases/download"
@@ -73,33 +96,38 @@ class SimpleEnvironment:
         rmtree(self.libs_path, ignore_errors=True)
 
         required_tasks: Dict[str, SetupTask] = {
-            "install_java": SetupJavaBin("java", {
+            "java": SetupJavaBin("java", {
                 "JAVA_HOME": f"{self.libs_path}/jdk-{self.config.get_package_version('java')}",
                 "PATH": "$PATH:$JAVA_HOME/bin"}),
-            "install_scala": SetupJavaBin("scala", {
+            "scala": SetupJavaBin("scala", {
                 "SCALA_HOME": self.package_home_directory('scala'),
                 "PATH": "$PATH:$SCALA_HOME/bin"}),
-            "install_spark": SetupJavaBin("spark", {
+            "spark": SetupJavaBin("spark", {
                 "SPARK_HOME": self.package_home_directory('spark'),
                 "PATH": "$PATH:$SPARK_HOME/bin"}),
-            "setup_master": SetupMasterConfig(),
+            "setup_driver": SetupDriverConfig(),
             "setup_envs": SetupEnvsScript(),
         }
 
         optional_tasks: Dict[str, SetupTask] = {
             "setup_metastore": SetupHiveMetastore(),
-            "install_delta": SetupDelta(),
+            "setup_jars": SetupMavenJar(),
+            "delta": SetupDelta()
         }
 
         include_optional_tasks: List[str] = []
+        if self.config.jdbc_drivers:
+            include_optional_tasks.append('setup_jars')
         if self.config.metastore_config:
             include_optional_tasks.append("setup_metastore")
         if "delta" in self.config.packages:
-            include_optional_tasks.append("install_delta")
+            include_optional_tasks.append("delta")
 
         for task_name, task in required_tasks.items():
+            print(f'Running task {task_name}')
             task.run(self)
 
         for task_name in include_optional_tasks:
+            print(f'Running task {task_name}')
             task = optional_tasks[task_name]
             task.run(self)
