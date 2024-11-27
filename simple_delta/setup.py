@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 import os
 import tarfile
-from typing import Dict, List
 
 from urllib.request import urlretrieve
 
@@ -19,7 +18,7 @@ class SetupTask(ABC):
 
 class SetupJavaBin(SetupTask):
 
-    def __init__(self, package: str,  env_variables: Dict[str, str]):
+    def __init__(self, package: str,  env_variables: dict[str, str]):
         self.package = package
         self.env_variables = env_variables
 
@@ -155,6 +154,7 @@ class SetupHiveMetastore(SetupTask):
             <name>hive.metastore.db.type</name>
             <value>{config.db_type}</value>
         </property>
+        </configuration>
         """
 
         return xml
